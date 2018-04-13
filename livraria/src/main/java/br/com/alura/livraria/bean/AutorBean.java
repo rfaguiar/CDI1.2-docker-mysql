@@ -1,14 +1,15 @@
 package br.com.alura.livraria.bean;
 
 import br.com.alura.livraria.modelo.Autor;
-import br.com.livrarialib.DAO;
+import br.com.livrarialib.dao.DAO;
+import br.com.livrarialib.tx.annotation.Transacional;
 
+import javax.enterprise.inject.Model;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.List;
 
-@Named
+@Model
 public class AutorBean implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -17,10 +18,10 @@ public class AutorBean implements Serializable{
 	
 	private Integer autorId;
 
-	private DAO<Autor> autorDAO;
+	private DAO<Autor, Integer> autorDAO;
 
 	@Inject
-    public AutorBean(DAO<Autor> autorDAO) {
+    public AutorBean(DAO<Autor, Integer> autorDAO) {
         this.autorDAO = autorDAO;
     }
 
@@ -36,6 +37,7 @@ public class AutorBean implements Serializable{
 		this.autor = autorDAO.buscaPorId(autorId);
 	}
 
+	@Transacional
 	public String gravar() {
 		System.out.println("Gravando autor " + this.autor.getNome());
 
@@ -49,7 +51,8 @@ public class AutorBean implements Serializable{
 
 		return "livro?faces-redirect=true";
 	}
-	
+
+	@Transacional
 	public void remover(Autor autor) {
 		System.out.println("Removendo autor " + autor.getNome());
         autorDAO.remove(autor);

@@ -1,23 +1,20 @@
 package br.com.alura.livraria.dao;
 
+import br.com.alura.livraria.modelo.Usuario;
+import br.com.livrarialib.jpa.annotation.Query;
+
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-
-import br.com.alura.livraria.modelo.Usuario;
-
 import java.io.Serializable;
 
 public class UsuarioDao implements Serializable {
 
-	@Inject
-	private EntityManager em;
+	@Inject @Query("select u from Usuario u where u.email = :pEmail and u.senha = :pSenha")
+	private TypedQuery<Usuario> query;
+
 
 	public boolean existe(Usuario usuario) {
-		TypedQuery<Usuario> query = em.createQuery(
-				  " select u from Usuario u "
-				+ " where u.email = :pEmail and u.senha = :pSenha", Usuario.class);
 		
 		query.setParameter("pEmail", usuario.getEmail());
 		query.setParameter("pSenha", usuario.getSenha());
@@ -26,8 +23,6 @@ public class UsuarioDao implements Serializable {
 		} catch (NoResultException ex) {
 			return false;
 		}
-		
-		em.close();
 		
 		return true;
 	}

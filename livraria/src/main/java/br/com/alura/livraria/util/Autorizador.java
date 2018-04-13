@@ -1,49 +1,48 @@
 package br.com.alura.livraria.util;
 
+import br.com.alura.livraria.modelo.Usuario;
+import br.com.livrarialib.jsf.annotation.After;
+import br.com.livrarialib.jsf.annotation.Phase;
+import br.com.livrarialib.jsf.annotation.ScopeMap;
+
+import javax.enterprise.event.Observes;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
-import javax.faces.event.PhaseListener;
+import javax.inject.Inject;
+import java.util.Map;
 
-import br.com.alura.livraria.modelo.Usuario;
+public class Autorizador {
 
-public class Autorizador implements PhaseListener  {
+	@Inject
+	private FacesContext context;
 
-	private static final long serialVersionUID = 1L;
+	@Inject
+	@ScopeMap(ScopeMap.Scope.SESSION)
+	private Map<String, Object> sessionMap;
 
-	@Override
-	public void afterPhase(PhaseEvent evento) {
+	@Inject
+	private NavigationHandler handler;
 
-		FacesContext context = evento.getFacesContext();
+	public void autoriza( @Observes @After @Phase(Phase.Phases.RESTORE_VIEW) PhaseEvent event) {
 		String nomePagina = context.getViewRoot().getViewId();
-	
+
 		System.out.println(nomePagina);
-		
-		if("/login.xhtml".equals(nomePagina)) {
+
+		if ("/login.xhtml".equals(nomePagina)) {
 			return;
 		}
-		
-		Usuario usuarioLogado = (Usuario) context.getExternalContext().getSessionMap().get("usuarioLogado");
-		
-		if(usuarioLogado != null) {
+
+		Usuario usuarioLogado = (Usuario) sessionMap.get("usuarioLogado");
+
+		if (usuarioLogado != null) {
 			return;
 		}
-		
-		//redirecionamento para login.xhtml
-		
-		NavigationHandler handler = context.getApplication().getNavigationHandler();
+
+		// redirecionamento para login.xhtml
+
 		handler.handleNavigation(context, null, "/login?faces-redirect=true");
 		context.renderResponse();
-	} 
-
-	@Override
-	public void beforePhase(PhaseEvent event) {
-	}
-
-	@Override
-	public PhaseId getPhaseId() {
-		return PhaseId.RESTORE_VIEW;
 	}
 
 }

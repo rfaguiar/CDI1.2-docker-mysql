@@ -2,29 +2,27 @@ package br.com.alura.livraria.bean;
 
 import br.com.alura.livraria.modelo.Livro;
 import br.com.alura.livraria.modelo.Venda;
-import br.com.livrarialib.DAO;
+import br.com.livrarialib.dao.DAO;
+import br.com.livrarialib.jsf.annotation.ViewModel;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 
-import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Named
-@ViewScoped
+@ViewModel
 public class VendasBean implements Serializable{
 
 
 	private static final long serialVersionUID = 1L;
 
-	private DAO<Livro> livroDAO;
+	private DAO<Livro, Integer> livroDAO;
 
 	@Inject
-    public VendasBean(DAO<Livro> livroDAO) {
+    public VendasBean(DAO<Livro, Integer> livroDAO) {
         this.livroDAO = livroDAO;
     }
 

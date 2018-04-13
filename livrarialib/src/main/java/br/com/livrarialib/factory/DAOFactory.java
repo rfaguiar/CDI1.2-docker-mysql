@@ -1,4 +1,6 @@
-package br.com.livrarialib;
+package br.com.livrarialib.factory;
+
+import br.com.livrarialib.dao.DAO;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -13,11 +15,11 @@ public class DAOFactory {
     private EntityManager manager;
 
     @Produces
-    public <T> DAO<T> factory(InjectionPoint point) {
+    public <T, I> DAO<T, I> factory(InjectionPoint point) {
         ParameterizedType types = (ParameterizedType) point.getType();
 
         Type type = types.getActualTypeArguments()[0];
 
-        return new DAO<T>((Class<T>)type, manager);
+        return new DAO<T, I>((Class<T>)type, manager);
     }
 }
